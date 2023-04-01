@@ -1,32 +1,29 @@
 import itertools
+import pandas as pd
 
 #calculate distance bwt 2 POI based on lat/long
 
-def getlocation(POIs_list):
-    POIs_dict = {}
-    for poi in POIs_list:
-        POIs_dict[poi] = database[poi] # get it from database
-    return POIs_dict
-
 def distance(POI_1, POI_2):
-    return ((POI_1[0] - POI_2[0])**2 + (POI_1[1] - POI_2[1])**2)**0.5
+    return (float((POI_1["lat"]) - float(POI_2["lat"]))**2 + (float(POI_1["lon"]) - float(POI_2["lon"]))**2)**0.5
 
-def tsp(POIs_list):
-    POIs_dict = getlocation(POIs_list)
+def tsp(loca):
     shortest_path = None
     shortest_distance = float('inf')
-    for path in itertools.permutations(POIs_dict.keys()):
+    for path in itertools.permutations(loca['thing_title']):
         total_distance = 0
         for i in range(len(path) - 1):
-            total_distance += distance(POIs_dict[path[i]], POIs_dict[path[i+1]])
+            total_distance += distance(loca[loca['thing_title'] == path[i]], loca[loca['thing_title'] == path[i+1]])
         if total_distance < shortest_distance:
             shortest_distance = total_distance
             shortest_path = path
     return shortest_path, shortest_distance
 
 # Example
-POIs = ["A", "B", "C"]
-database = {"A": (1,3), "B": (4,7), "C": (5,3)}
-shortest_path, shortest_distance = tsp(POIs)
+A = {"thing_title": "A", "lat": 2, 'lon':3}
+B = {"thing_title": "B", "lat": 6, 'lon':2}
+C = {"thing_title": "C", "lat": 2, 'lon':5}
+loca = pd.DataFrame([A,B,C])
+
+shortest_path, shortest_distance = tsp(loca)
 print("Shortest path:", shortest_path)
 print("Shortest distance:", shortest_distance)
