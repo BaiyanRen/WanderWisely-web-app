@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import pandas as pd
 import helper_functions as uf
-
+import get_park
 
 # build database connection
 
@@ -50,8 +50,10 @@ def record_button():
 
 @app.route('/parks')
 def parks():
-    top_three_parks = ["Acadia National Park", "Arches National Park", "Capitol Reef National Park"]
-    hours = [1,2,3,4,5,6,7,8,9,10,11,12]
+    amenity_ids=user_selection['amenities']
+    activity_ids=user_selection['amenities']
+    top_three_parks = get_park(amenity_ids,activity_ids)
+    hours = user_selection['hours']
     return render_template('parks.html',parks = top_three_parks, hours = hours)
 
 def generate_places(parkName, activities):
