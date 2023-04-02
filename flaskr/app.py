@@ -41,14 +41,12 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     initiate_selection()
-    print(user_selection)
     return render_template('home.html')
 
 
 @app.route('/ActivitiesAndAmenities')
 def ActivitiesAndAmenities():
     initiate_selection()
-    print(user_selection)
     return render_template('ActivitiesAndAmenities.html', activities=activities, amenities=amenities)
 
 
