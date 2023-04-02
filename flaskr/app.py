@@ -50,10 +50,10 @@ def record_button():
 
 @app.route('/parks')
 def parks():
-    amenity_ids=user_selection['amenities']
-    activity_ids=user_selection['amenities']
-    top_three_parks = gp.get_park(amenity_ids,activity_ids)
-    hours = user_selection['hours']
+    amenity_names=user_selection['amenities']
+    activity_names=user_selection['activities']
+    top_three_parks = gp.get_park(amenity_names,activity_names)
+    hours = [1,2,3,4,5,6,7,8,9,10,11,12]
     return render_template('parks.html',parks = top_three_parks, hours = hours)
 
 def generate_places(parkName, activities):
