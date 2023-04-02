@@ -3,17 +3,22 @@ import pandas as pd
 import helper_functions as uf
 conn, engine = uf.conn_to_db()
 
-def get_park(amenity_ids,activity_ids):
-        query_amenity = f"select id,parkName from wanderwisely.amenity_related_parks"
-        query_activity= f"select id,parkName from wanderwisely.activity_related_parks"
+def get_park(amenity_names,activity_names):
+        amenity_names = "','".join(amenity_names)
+        activity_names="','".join(activity_names)
+        query_amenity = f"select name,parkName from wanderwisely.amenity_related_parks where name in ('{amenity_names}')"
+        query_activity= f"select name,parkName from wanderwisely.activity_related_parks where name in ('{activity_names}')"
         df_amenity = uf.import_data(query_amenity, conn)
         df_activity = uf.import_data(query_activity, conn)
-        parks_df = pd.merge(df_amenity, df_activity, on='parkName', how='outer')
-        parks_df = parks_df.rename(columns={'id_x': 'amenity_id', 'id_y': 'activity_id'})
-        if amenity_ids is not None and activity_ids is not None and len(amenity_ids) > 0 and len(activity_ids) > 0:
-             condition = (parks_df['amenity_id'].isin(amenity_ids)) & (parks_df['activity_id'].isin(activity_ids))
-             parks_df = parks_df[condition]
-             parks_df['parkName_count'] = parks_df['parkName'].apply(lambda x: parks_df['parkName'].value_counts()[x])
-             top_parks = parks_df.groupby(['parkName']).size().reset_index(name='count').sort_values('count', ascending=False).head(3)
-             data = top_parks['parkName'].values.tolist()
-             return data
+        
+        df_amenity['parkname_count'] = df_amenity.groupby('parkName')['name'].transform('count')
+        df_amenties = df_amenity[['parkName', 'parkname_count']].drop_duplicates(subset='parkName').reset_index(drop=True)
+        
+        df_activity['parkname_count'] = df_activity.groupby('parkName')['name'].transform('count')
+        df_activities = df_activity[['parkName', 'parkname_count']].drop_duplicates(subset='parkName').reset_index(drop=True)
+        df_merged = pd.merge(df_amenties, df_activities, on='parkName')
+        df_merged['parkname_count_total'] = df_merged['parkname_count_x'] + df_merged['parkname_count_y']
+        df_merged_sorted = df_merged.sort_values(by='parkname_count_total', ascending=False).head(3)
+        data = df_merged_sorted['parkName'].values.tolist()
+        return data
+        
