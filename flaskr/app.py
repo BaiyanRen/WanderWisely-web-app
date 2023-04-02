@@ -10,8 +10,8 @@ from TS import tsp
 conn, engine = uf.conn_to_db()
 
 # get Activities and Amenities
-activities = uf.import_data("select * from wanderwisely.activity_related_parks", conn)
-activities = activities["name"].unique()
+activities = uf.import_data("select * from wanderwisely.things_to_do_places", conn)
+activities = activities["activity_name"].unique()
 amenities = uf.import_data("select * from wanderwisely.amenity_related_parks", conn)
 amenities = amenities["name"].unique()
 # load data to map parkCode to parkName
