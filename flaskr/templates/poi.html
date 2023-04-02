@@ -48,10 +48,7 @@
                            <a class="nav-link" href="{{ url_for('home')}}">Home</a>
                         </li>
                         <li class="nav-item">
-                           <a class="nav-link" href="about.html">About</a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" href="services.html">Services</a>
+                           <a class="nav-link" href="{{url_for('ActivitiesAndAmenities')}}">Activities and Amenities</a>
                         </li>
                         <li class="nav-item">
                            <a class="nav-link " href="https://github.com/BaiyanRen/WanderWisely-web-app">GitHub</a>
@@ -68,8 +65,7 @@
                <div class="menu_main">
                   <ul>
                      <li class="active"><a href="{{ url_for('home')}}">Home</a></li>
-                     <li><a href="about.html">About</a></li>
-                     <li><a href="services.html">Services</a></li>
+                     <li><a href="{{url_for('ActivitiesAndAmenities')}}">Activities and Amenities</a></li>
                      <li><a href="https://github.com/BaiyanRen/WanderWisely-web-app">GitHub</a></li>
                      <li><a href="contact.html">Contact us</a></li>
                   </ul>
@@ -101,7 +97,7 @@
          </div>
       </div>
 
-      <div class="send_btn"><a href="/poi">Show the personalized itinerary</a></div>
+      <div class="send_btn"><a href="/generate_route">Generate the personalized itinerary</a></div>
       <!-- services section end -->
       <!-- footer section start -->
       <div class="footer_section layout_padding">
