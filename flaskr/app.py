@@ -84,8 +84,11 @@ def generate_route():
     on table1.parkCode = table2.parkCode
     where parkName = '{}' AND thing_title in {} """ .format(*user_selection['park'], tuple(user_selection['pois']))
     loca = uf.import_data(query, conn)
+    print(loca)
     #get route
-    shortest_path, shortest_time, shortest_distance = tsp(loca)
+    shortest_path, shortest_time, shortest_distance, cal_time= tsp(loca)
+    
+    print("cal time: ", cal_time)
    
     return render_template('generate_route.html', shortest_path = shortest_path, shortest_time = shortest_time, shortest_distance = shortest_distance)
 
