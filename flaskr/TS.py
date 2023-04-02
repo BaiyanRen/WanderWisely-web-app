@@ -41,6 +41,7 @@ def distance(a_position, b_position):
 
 
 def tsp(loca):
+    start = datetime.now()
     shortest_path = {}
     shortest_distance = shortest_time = float('inf')
     for path in itertools.permutations(loca['thing_title']):
@@ -58,7 +59,9 @@ def tsp(loca):
             short_route = path
     for p in short_route:
         shortest_path[p] = [float(loca[loca['thing_title'] == p]['lat']), float(loca[loca['thing_title'] == p]['lon'])]
-    return shortest_path, shortest_time, shortest_distance
+    end = datetime.now()
+    cal_time = end - start
+    return shortest_path, shortest_time, shortest_distance, cal_time
 
 #Example
 # A = {"thing_title": "A", "lat":44.362291699252, 'lon':-68.2076065006421}
