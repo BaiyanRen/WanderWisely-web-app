@@ -15,7 +15,6 @@ amenities = amenities["name"].unique()
 # load data to map parkCode to parkName
 parks_df = uf.import_data(f"select * from wanderwisely.activity_related_parks", conn)
 
-
 # record user's selection
 user_selection = {"activities": [], "amenities": [], "pois": [],"hours":[], "park":[]}
 
@@ -28,8 +27,11 @@ def update_selection(selection, select_type):
         else:
             user_selection[select_type].append(selection)
 
-
 app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template('home.html')
 
 
 @app.route('/ActivitiesAndAmenities')
@@ -45,12 +47,12 @@ def record_button():
     print(user_selection)
     return '', 204
 
+
 @app.route('/parks')
 def parks():
     top_three_parks = ["Acadia National Park", "Arches National Park", "Capitol Reef National Park"]
     hours = [1,2,3,4,5,6,7,8,9,10,11,12]
     return render_template('parks.html',parks = top_three_parks, hours = hours)
-
 
 def generate_places(parkName, activities):
     parkCode = parks_df[parks_df['parkName'] == parkName]['parkCode'].tolist()[0]
@@ -70,11 +72,13 @@ def poi():
     # places = generate_places('Yosemite National Park', ['Hiking', 'Biking', 'Astronomy', 'Boating'])
     return render_template('poi.html', parkName=parkName, places=places)
 
-
-
-@app.route('/')
-def home():
-    return render_template('home.html')
+# get lat/lon of selected places
+tpl = ('Go Earthcaching At Acadia', 'Bike Carriage Roads')
+query = """select thing_title, lat, lon from wanderwisely.things_to_do_places as table1
+    inner join wanderwisely.activity_related_parks as table2
+    on table1.parkCode = table2.parkCode
+    where parkName = '{}' AND thing_title in {} """ .format('Acadia National Park', tpl)
+loca = uf.import_data(query, conn)
 
 
 @app.route('/contact')
