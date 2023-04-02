@@ -29,15 +29,26 @@ def update_selection(selection, select_type):
         else:
             user_selection[select_type].append(selection)
 
+def initiate_selection():
+    user_selection["activities"] = []
+    user_selection["amenities"] = []
+    user_selection["pois"] = []
+    user_selection["hours"] = []
+    user_selection["park"] = []
+
 app = Flask(__name__)
 
 @app.route('/')
 def home():
+    initiate_selection()
+    print(user_selection)
     return render_template('home.html')
 
 
 @app.route('/ActivitiesAndAmenities')
 def ActivitiesAndAmenities():
+    initiate_selection()
+    print(user_selection)
     return render_template('ActivitiesAndAmenities.html', activities=activities, amenities=amenities)
 
 
@@ -52,6 +63,8 @@ def record_button():
 
 @app.route('/parks')
 def parks():
+    # initiate parks in case users come back to the page
+    user_selection["park"] = []
     amenity_names=user_selection['amenities']
     activity_names=user_selection['activities']
     top_three_parks = gp.get_park(amenity_names,activity_names)
@@ -69,6 +82,8 @@ def generate_places(parkName, activities):
 
 @app.route('/poi')
 def poi():
+    # initiate pois in case users come back to the page
+    user_selection["pois"] = []
     parkName = user_selection['park'][0]
     activities = user_selection['activities']
     places = generate_places(parkName, activities)
