@@ -36,7 +36,7 @@ def distance(a_position, b_position):
 
 
 def tsp(loca):
-    shortest_path  = None
+    shortest_path = {}
     shortest_distance = shortest_time = float('inf')
     for path in itertools.permutations(loca['thing_title']):
         total_distance = 0
@@ -50,16 +50,18 @@ def tsp(loca):
         if total_distance < shortest_distance:
             shortest_distance = total_distance
             shortest_time = total_time
-            shortest_path = path
+            short_route = path
+    for p in short_route:
+        shortest_path[p] = [float(loca[loca['thing_title'] == p]['lat']), float(loca[loca['thing_title'] == p]['lon'])]
     return shortest_path, shortest_time, shortest_distance
 
-# Example
-A = {"thing_title": "A", "lat":44.362291699252, 'lon':-68.2076065006421}
-B = {"thing_title": "B", "lat": 44.300245999522, 'lon':-68.3498804911828}
-C = {"thing_title": "C", "lat": 44.29906967, 'lon':-68.31566767}
-loca = pd.DataFrame([A,B,C])
+#Example
+# A = {"thing_title": "A", "lat":44.362291699252, 'lon':-68.2076065006421}
+# B = {"thing_title": "B", "lat": 44.300245999522, 'lon':-68.3498804911828}
+# C = {"thing_title": "C", "lat": 44.29906967, 'lon':-68.31566767}
+# loca = pd.DataFrame([A,B,C])
 
-shortest_path, shortest_time, shortest_distance = tsp(loca)
-print("Shortest path:", shortest_path)
-print("Shortest time in hour :", shortest_time)
-print("Shortest distance in mile:", shortest_distance)
+# shortest_path, shortest_time, shortest_distance = tsp(loca)
+# print("Shortest path:", shortest_path)
+# print("Shortest time in hour :", shortest_time)
+# print("Shortest distance in mile:", shortest_distance)
