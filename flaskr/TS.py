@@ -12,26 +12,31 @@ def distance(a_position, b_position):
     now = datetime.now()
     driving = gmaps.directions(a_position, b_position, mode="driving", departure_time=now)
     driving_time = driving[0]["legs"][0]["duration"]["text"] if driving != [] else None
-    driving_time_split = driving_time.split(" ")
-    if len(driving_time_split) == 2:  # eg 34 mins or 2 hours
-        time_value = driving_time_split[0]
-        time_unit = driving_time_split[1]
-        if time_unit  == 'min' or 'mins':
-            time_value = float(time_value)/60
-        if time_unit  == 'hour' or 'hours':
-            time_value = float(time_value)
-    if len(driving_time_split) == 4:  # eg 1 hour 4 mins
-        time_value_hr = driving_time_split[0]
-        time_value_min = driving_time_split[2]
-        time_value = float(time_value_hr) + float(time_value_min)/60
+    if driving_time != None:
+        driving_time_split = driving_time.split(" ")
+        if len(driving_time_split) == 2:  # eg 34 mins or 2 hours
+            time_value = driving_time_split[0]
+            time_unit = driving_time_split[1]
+            if time_unit  == 'min' or 'mins':
+                time_value = float(time_value)/60
+            if time_unit  == 'hour' or 'hours':
+                time_value = float(time_value)
+        if len(driving_time_split) == 4:  # eg 1 hour 4 mins
+            time_value_hr = driving_time_split[0]
+            time_value_min = driving_time_split[2]
+            time_value = float(time_value_hr) + float(time_value_min)/60
+    else:
+        return None
         
     driving_distance = driving[0]["legs"][0]["distance"]["text"] if driving != [] else None
-    distance_value, distance_unit = driving_distance.split(" ")
-    if distance_unit == 'mi':
-        distance_value = float(distance_value)
-    if distance_unit != 'mi': # ft or fts
-        distance_value = float(distance_value)/5280
-    
+    if driving_distance != None:
+        distance_value, distance_unit = driving_distance.split(" ")
+        if distance_unit == 'mi':
+            distance_value = float(distance_value.replace(",", ""))
+        if distance_unit != 'mi': # ft or fts
+            distance_value = float(distance_value.replace(",", ""))/5280
+    else:
+        return None
     return (time_value, distance_value)
 
 

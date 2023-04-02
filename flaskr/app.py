@@ -72,8 +72,6 @@ def poi():
     parkName = user_selection['park'][0]
     activities = user_selection['activities']
     places = generate_places(parkName, activities)
-    parkName = 'Yosemite National Park'
-    places = generate_places('Yosemite National Park', ['Hiking', 'Biking', 'Astronomy', 'Boating'])
     
     return render_template('poi.html', parkName=parkName, places=places)
 
