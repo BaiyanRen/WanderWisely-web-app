@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import pandas as pd
 import helper_functions as uf
+from TS import tsp
 
 
 # build database connection
@@ -50,7 +51,7 @@ def record_button():
 
 @app.route('/parks')
 def parks():
-    top_three_parks = ["Acadia National Park", "Arches National Park", "Capitol Reef National Park"]
+    top_three_parks = ["Acadia National Park", "Arches National Park", 'Yosemite National Park']
     hours = [1,2,3,4,5,6,7,8,9,10,11,12]
     return render_template('parks.html',parks = top_three_parks, hours = hours)
 
@@ -68,17 +69,24 @@ def poi():
     parkName = user_selection['park'][0]
     activities = user_selection['activities']
     places = generate_places(parkName, activities)
-    # parkName = 'Yosemite National Park'
-    # places = generate_places('Yosemite National Park', ['Hiking', 'Biking', 'Astronomy', 'Boating'])
+    parkName = 'Yosemite National Park'
+    places = generate_places('Yosemite National Park', ['Hiking', 'Biking', 'Astronomy', 'Boating'])
+    
     return render_template('poi.html', parkName=parkName, places=places)
 
+
 # get lat/lon of selected places
-tpl = ('Go Earthcaching At Acadia', 'Bike Carriage Roads')
-query = """select thing_title, lat, lon from wanderwisely.things_to_do_places as table1
+@app.route('/generate_route')
+def generate_route(): 
+    query = """select distinct thing_title, lat, lon from wanderwisely.things_to_do_places as table1
     inner join wanderwisely.activity_related_parks as table2
     on table1.parkCode = table2.parkCode
-    where parkName = '{}' AND thing_title in {} """ .format('Acadia National Park', tpl)
-loca = uf.import_data(query, conn)
+    where parkName = '{}' AND thing_title in {} """ .format(*user_selection['park'], tuple(user_selection['pois']))
+    loca = uf.import_data(query, conn)
+    #get route
+    shortest_path, shortest_time, shortest_distance = tsp(loca)
+   
+    return render_template('generate_route.html', shortest_path = shortest_path, shortest_time = shortest_time, shortest_distance = shortest_distance)
 
 
 @app.route('/contact')
