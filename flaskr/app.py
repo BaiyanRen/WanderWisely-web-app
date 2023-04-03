@@ -86,11 +86,14 @@ def generate_route():
     loca = uf.import_data(query, conn)
     print(loca)
     #get route
-    shortest_path, shortest_time, shortest_distance, cal_time= tsp(loca)
+    shortest_path, shortest_time, route_distance, pair_time_route, cal_time= tsp(loca)
     
+    print("shortest_path: ", shortest_path)
+    print("shortest_time: ", shortest_time)
+    print("pair_time_route: ", pair_time_route)
     print("cal time: ", cal_time)
    
-    return render_template('generate_route.html', shortest_path = shortest_path, shortest_time = shortest_time, shortest_distance = shortest_distance)
+    return render_template('generate_route.html', shortest_path = shortest_path )
 
 
 @app.route('/contact')
