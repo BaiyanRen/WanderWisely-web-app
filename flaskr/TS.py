@@ -1,4 +1,5 @@
 import itertools
+from collections import OrderedDict
 import pandas as pd
 import googlemaps
 from datetime import datetime
@@ -66,7 +67,10 @@ def tsp(loca):
     shortest_path = None
     route_distance = shortest_time = float('inf')
     pair_time_all = {}   # save all the possible 2 POI combinations travel time
-    pair_time_route = {}  # only save travel time of possible 2 POI combinations from shortest path
+    pair_distance_all = {}   # save all the possible 2 POI combinations travel time
+    pair_time_route = OrderedDict() # only save travel time of possible 2 POI combinations from shortest path
+    pair_distance_route = OrderedDict() # only save travel distance of possible 2 POI combinations from shortest path
+    duration = OrderedDict()
  
     for path in itertools.permutations(loca['thing_title']):
         total_distance = 0
@@ -76,6 +80,7 @@ def tsp(loca):
             b_position = [float(loca[loca['thing_title'] == path[i+1]]['lat']), float(loca[loca['thing_title'] == path[i+1]]['lon'])]
             direction = distance(a_position, b_position)
             pair_time_all[(path[i],path[i+1])] = direction[0]
+            pair_distance_all[(path[i],path[i+1])] = direction[1]
             total_time += direction[0]
             total_distance += direction[1]
         if total_time < shortest_time:
@@ -86,18 +91,23 @@ def tsp(loca):
     for i in range(len(shortest_path)-1):
         if (shortest_path[i], shortest_path[i+1]) in pair_time_all.keys():
             pair_time_route[(shortest_path[i], shortest_path[i+1])] = pair_time_all[(shortest_path[i], shortest_path[i+1])]
+            pair_distance_route[(shortest_path[i], shortest_path[i+1])] = pair_distance_all[(shortest_path[i], shortest_path[i+1])]
+    for i in range(len(shortest_path)): 
+        duration[shortest_path[i]] = float(loca[loca["thing_title"] == shortest_path[i]]["duration"])
+          
                     
     end = datetime.now()
     cal_time = end - start
-    return shortest_path, shortest_time, route_distance, pair_time_route, cal_time
+    return shortest_path, shortest_time, pair_distance_route, pair_time_route, duration, cal_time
+
 
 #Example1 acad park
-# A = {"thing_title": "Hike Double Bubble Nubble Loop with Island Explorer", "lat":44.350011499069, 'lon':-68.2414535993951}
-# B = {"thing_title": "Hike Great Head Trail", "lat": 44.3300018310546, 'lon':-68.1775283813476}
-# C = {"thing_title": "Hike Ship Harbor Trail", "lat": 44.2284927368164, 'lon':-68.3237609863281}
-# D = {"thing_title": "Hike Giant Slide Loop", "lat": 44.35079167, 'lon':-68.30218833}
-# E = {"thing_title": "Hike Gorge Path", "lat": 44.372621, 'lon':-68.221942}
-# loca = pd.DataFrame([A,B,C,D])
+A = {"thing_title": "Hike Double Bubble Nubble Loop with Island Explorer", "lat":44.350011499069, 'lon':-68.2414535993951, "duration": 2.0}
+B = {"thing_title": "Hike Great Head Trail", "lat": 44.3300018310546, 'lon':-68.1775283813476, "duration": 4.0}
+C = {"thing_title": "Hike Ship Harbor Trail", "lat": 44.2284927368164, 'lon':-68.3237609863281, "duration": 1.0}
+D = {"thing_title": "Hike Giant Slide Loop", "lat": 44.35079167, 'lon':-68.30218833, "duration": 4.0}
+E = {"thing_title": "Hike Gorge Path", "lat": 44.372621, 'lon':-68.221942, "duration": 3.0}
+loca = pd.DataFrame([A,B,C])
 
 #Example2 yell park
 # A = {"thing_title": "Natural Bridge Trail", "lat":40.754898, 'lon':-122.323452}
@@ -105,9 +115,10 @@ def tsp(loca):
 # C = {"thing_title": "Beaver Ponds Trail", "lat": 44.967939, 'lon':-110.704438}
 # loca = pd.DataFrame([A,B,C])
 
-# shortest_path, shortest_time, shortest_distance, pair_time_route, cal_time = tsp(loca)
-# print("Shortest path:", shortest_path)
-# print("Shortest time in hour :", shortest_time)
-# print("Route distance in mile:", shortest_distance)
-# print("Pairs time:", pair_time_route)
-# print("Calculation time:", cal_time)
+shortest_path, shortest_time, pair_distance_route, pair_time_route, duration, cal_time = tsp(loca)
+print("Shortest path:", shortest_path)
+print("Shortest time in hour :", shortest_time)
+print("Route distance in mile:", pair_distance_route)
+print("Pairs time:", pair_time_route)
+print("Calculation time:", cal_time)
+print("duration: ", duration)
