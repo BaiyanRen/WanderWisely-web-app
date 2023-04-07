@@ -3,6 +3,8 @@ from collections import OrderedDict
 import pandas as pd
 import googlemaps
 from datetime import datetime
+import numpy as np
+from python_tsp.exact import solve_tsp_dynamic_programming
 
 API_key = 'AIzaSyBHD-lOFZgRIJiSSyGzA51S5jFZ6b386NU'#enter Google Maps API key
 gmaps = googlemaps.Client(key=API_key)
@@ -61,6 +63,31 @@ def distance(a_position, b_position):
     
     return (time_value, distance_value)
 
+def get_matrix(loca):
+    pois = loca["thing_title"]
+    n_pois = len(pois)
+    geo = loca[["lat", "lon"]]
+    time_matrix = np.zeros((n_pois, n_pois))
+    distance_matrix = np.zeros((n_pois, n_pois))
+
+    for i in range(distance_matrix.shape[0]):
+        for j in range(distance_matrix.shape[1]):
+            if j != i:
+               
+                a = loca["thing_title"][i]
+                b = loca["thing_title"][j]
+                a_position = [float(loca[loca['thing_title'] == a]['lat'].iloc[0]), float(loca[loca['thing_title'] == a]['lon'].iloc[0])]
+                b_position = [float(loca[loca['thing_title'] == b]['lat'].iloc[0]), float(loca[loca['thing_title'] == b]['lon'].iloc[0])]
+                time_matrix[i,j] = distance(a_position, b_position)[0]
+                distance_matrix[i,j] = distance(a_position, b_position)[1]
+            elif j == i:
+                continue
+            #else:
+            #    distance_matrix[i,j] = distance_matrix[j,i]
+            #    time_matrix[i,j] = time_matrix[j,i]
+
+    return time_matrix, distance_matrix
+
 
 def tsp(loca):
     start = datetime.now()
@@ -100,25 +127,32 @@ def tsp(loca):
     cal_time = end - start
     return shortest_path, shortest_time, pair_distance_route, pair_time_route, duration, cal_time
 
+if __name__ == '__main__':
+    #Example1 acad park
+    A = {"thing_title": "Hike Double Bubble Nubble Loop with Island Explorer", "lat":44.350011499069, 'lon':-68.2414535993951, "duration": 2.0}
+    B = {"thing_title": "Hike Great Head Trail", "lat": 44.3300018310546, 'lon':-68.1775283813476, "duration": 4.0}
+    C = {"thing_title": "Hike Ship Harbor Trail", "lat": 44.2284927368164, 'lon':-68.3237609863281, "duration": 1.0}
+    D = {"thing_title": "Hike Giant Slide Loop", "lat": 44.35079167, 'lon':-68.30218833, "duration": 4.0}
+    E = {"thing_title": "Hike Gorge Path", "lat": 44.372621, 'lon':-68.221942, "duration": 3.0}
+    loca = pd.DataFrame([A,B,C])
 
-#Example1 acad park
-A = {"thing_title": "Hike Double Bubble Nubble Loop with Island Explorer", "lat":44.350011499069, 'lon':-68.2414535993951, "duration": 2.0}
-B = {"thing_title": "Hike Great Head Trail", "lat": 44.3300018310546, 'lon':-68.1775283813476, "duration": 4.0}
-C = {"thing_title": "Hike Ship Harbor Trail", "lat": 44.2284927368164, 'lon':-68.3237609863281, "duration": 1.0}
-D = {"thing_title": "Hike Giant Slide Loop", "lat": 44.35079167, 'lon':-68.30218833, "duration": 4.0}
-E = {"thing_title": "Hike Gorge Path", "lat": 44.372621, 'lon':-68.221942, "duration": 3.0}
-loca = pd.DataFrame([A,B,C])
+    #Example2 yell park
+    # A = {"thing_title": "Natural Bridge Trail", "lat":40.754898, 'lon':-122.323452}
+    # B = {"thing_title":"Ribbon Lake Trail", "lat": 44.719745, 'lon':-110.485320}
+    # C = {"thing_title": "Beaver Ponds Trail", "lat": 44.967939, 'lon':-110.704438}
+    # loca = pd.DataFrame([A,B,C])
 
-#Example2 yell park
-# A = {"thing_title": "Natural Bridge Trail", "lat":40.754898, 'lon':-122.323452}
-# B = {"thing_title":"Ribbon Lake Trail", "lat": 44.719745, 'lon':-110.485320}
-# C = {"thing_title": "Beaver Ponds Trail", "lat": 44.967939, 'lon':-110.704438}
-# loca = pd.DataFrame([A,B,C])
+    shortest_path, shortest_time, pair_distance_route, pair_time_route, duration, cal_time = tsp(loca)
+    print("Shortest path:", shortest_path)
+    print("Shortest time in hour :", shortest_time)
+    print("Route distance in mile:", pair_distance_route)
+    print("Pairs time:", pair_time_route)
+    print("Calculation time:", cal_time)
+    print("duration: ", duration)
 
-shortest_path, shortest_time, pair_distance_route, pair_time_route, duration, cal_time = tsp(loca)
-print("Shortest path:", shortest_path)
-print("Shortest time in hour :", shortest_time)
-print("Route distance in mile:", pair_distance_route)
-print("Pairs time:", pair_time_route)
-print("Calculation time:", cal_time)
-print("duration: ", duration)
+    time_matrix, distance_matrix = get_matrix(loca)
+
+    permutation, distance = solve_tsp_dynamic_programming(time_matrix)
+
+    print(permutation, distance)
+
