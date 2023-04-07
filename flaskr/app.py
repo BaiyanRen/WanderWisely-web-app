@@ -92,18 +92,24 @@ def poi():
 # get lat/lon of selected places
 @app.route('/generate_route')
 def generate_route(): 
-    query = """select distinct thing_title, lat, lon from wanderwisely.things_to_do_places as table1
+    query = """select distinct thing_title, lat, lon, duration from wanderwisely.things_to_do_places as table1
     inner join wanderwisely.activity_related_parks as table2
     on table1.parkCode = table2.parkCode
     where parkName = '{}' AND thing_title in {} """ .format(*user_selection['park'], tuple(user_selection['pois']))
     loca = uf.import_data(query, conn)
     print(loca)
     #get route
-    shortest_path, shortest_time, shortest_distance, cal_time= tsp(loca)
+    route_order, shortest_time, route_pair_distance, route_pair_time, duration, cal_time= tsp(loca)
+    total_time = shortest_time + sum(loca['duration'])
     
+    print("shortest_path: ", route_order)
+    print("total: ", total_time)
+    print("route_pair_distance: ", route_pair_distance)
+    print("route_pair_time: ", route_pair_time)
+    print("duration: ", duration)
     print("cal time: ", cal_time)
    
-    return render_template('generate_route.html', shortest_path = shortest_path, shortest_time = shortest_time, shortest_distance = shortest_distance)
+    return render_template('generate_route.html', route_order = route_order, total_time = total_time, route_pair_distance = route_pair_distance, route_pair_time = route_pair_time, duration = duration)
 
 
 @app.route('/contact')
