@@ -92,11 +92,11 @@ def poi():
 # get lat/lon of selected places
 @app.route('/generate_route')
 def generate_route(): 
-    #query = """select distinct thing_title, lat, lon, duration from wanderwisely.things_to_do_places as table1
-    #inner join wanderwisely.activity_related_parks as table2
-    #on table1.parkCode = table2.parkCode
-    #where parkName = '{}' AND thing_title in {} """ .format(*user_selection['park'], tuple(user_selection['pois']))
-    #loca = uf.import_data(query, conn)
+    query = """select distinct thing_title, lat, lon, duration from wanderwisely.things_to_do_places as table1
+    inner join wanderwisely.activity_related_parks as table2
+    on table1.parkCode = table2.parkCode
+    where parkName = '{}' AND thing_title in {} """ .format(*user_selection['park'], tuple(user_selection['pois']))
+    loca = uf.import_data(query, conn)
 
     A = {"thing_title": "Hike Double Bubble Nubble Loop with Island Explorer", "lat":44.350011499069, 'lon':-68.2414535993951, "duration": 2.0}
     B = {"thing_title": "Hike Great Head Trail", "lat": 44.3300018310546, 'lon':-68.1775283813476, "duration": 4.0}
@@ -118,6 +118,7 @@ def generate_route():
     print("duration: ", duration)
     print("cal time: ", cal_time)
 
+    ##### samples for locations and location_names #######
     locations = "[[44.350011499069,-68.2414535993951],[44.3300018310546,-68.1775283813476],[44.2284927368164,-68.3237609863281],[44.35079167,-68.30218833],[44.372621,-68.221942]]"
     location_names = '["Hike_Double_Bubble_Nubble","Hike_Gorge_Path","Hike_Gorge_Path","Hike_Gorge_Path","Hike_Gorge_Path"]'
   

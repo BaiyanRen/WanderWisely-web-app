@@ -61,49 +61,50 @@
     </div>
     <!-- header section end -->
     <!-- itinerary section starts -->
-    <!--<h1> Detail </h1>
-    <!--<h2 class="services_section"> Total Time is {{total_time}} hours</h2>
-    <div style="width: 30%; margin: 20px 20px 20px">
-        {% for poi in route_order %}
-        <div style="padding: 2px; background-color: #EEE; margin: 2px">
-            <p style="font-size: 20px">Point of Interest: {{ poi }}</p>
-            <p style="font-size: 20px">Distance to next POI: {{ route_pair_distance[poi, route_order[route_order.index(poi)+1]] }} km</p>
-            <p style="font-size: 20px">Travel time to next POI: {{ route_pair_time[poi, route_order[route_order.index(poi)+1]] }} hours</p>
-            <p style="font-size: 20px">Duration in this POI: {{ duration[poi]}} hours</p>
+    <div class="container">
+        <h1> Detail </h1>
+        <h2 class="services_section"> Total Time is {{total_time}} hours</h2>
+        <div style="width: 30%; margin: 20px 20px 20px">
+            {% for poi in route_order %}
+            <div style="padding: 2px; background-color: #EEE; margin: 2px">
+                <p style="font-size: 20px">Point of Interest: {{ poi }}</p>
+                <p style="font-size: 20px">Distance to next POI: {{ route_pair_distance[poi, route_order[route_order.index(poi)+1]] }} km</p>
+                <p style="font-size: 20px">Travel time to next POI: {{ route_pair_time[poi, route_order[route_order.index(poi)+1]] }} hours</p>
+                <p style="font-size: 20px">Duration in this POI: {{ duration[poi]}} hours</p>
+            </div>
+            <span style="font-size: 24px">&#8595;</span>
+            {% endfor %}
         </div>
-        <span style="font-size: 24px">&#8595;</span>
-        {% endfor %}-->
-    <!--</div>-->
-    <!-- itinerary section section end -->
-
-
-    <h3>Your Itinerary</h3>
-    <div id="map"></div>
-    <!-- prettier-ignore -->
-    <div id="locations" locations={{ locations }}></div>
-    <div id="location_names" location_names={{ location_names }}></div>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHD-lOFZgRIJiSSyGzA51S5jFZ6b386NU&callback=initMap&v=weekly"></script>
-
-
-    <!-- copyright section start -->
-    <div class="copyright_section">
-        <div class="container">
-            <p class="copyright_text">2020 All Rights Reserved. Design by <a href="https://html.design">Free html  Templates</a></p>
-        </div>
+        <!--<!-- itinerary section section end -->
     </div>
-    <!-- copyright section end -->
-    <!-- Javascript files-->
-    <script src="static/js/jquery.min.js"></script>
-    <script src="static/js/popper.min.js"></script>
-    <script src="static/js/bootstrap.bundle.min.js"></script>
-    <script src="static/js/jquery-3.0.0.min.js"></script>
-    <script src="static/js/plugin.js"></script>
-    <!-- sidebar -->
-    <script src="static/js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="static/js/custom.js"></script>
-    <!-- javascript -->
-    <script src="static/js/owl.carousel.js"></script>
-    <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+        <div class="container">
+            <h3>Your Itinerary</h3>
+            <div id="map"></div>
+            <!-- prettier-ignore -->
+            <div id="locations" locations={{ locations }}></div>
+            <div id="location_names" location_names={{ location_names }}></div>
+            <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHD-lOFZgRIJiSSyGzA51S5jFZ6b386NU&callback=initMap&v=weekly"></script>
+        </div>
+
+        <!-- copyright section start -->
+        <div class="copyright_section">
+            <div class="container">
+                <p class="copyright_text">2020 All Rights Reserved. Design by <a href="https://html.design">Free html  Templates</a></p>
+            </div>
+        </div>
+        <!-- copyright section end -->
+        <!-- Javascript files-->
+        <script src="static/js/jquery.min.js"></script>
+        <script src="static/js/popper.min.js"></script>
+        <script src="static/js/bootstrap.bundle.min.js"></script>
+        <script src="static/js/jquery-3.0.0.min.js"></script>
+        <script src="static/js/plugin.js"></script>
+        <!-- sidebar -->
+        <script src="static/js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="static/js/custom.js"></script>
+        <!-- javascript -->
+        <script src="static/js/owl.carousel.js"></script>
+        <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
 
 </body>
 </html>
