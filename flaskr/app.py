@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import pandas as pd
 import helper_functions as uf
+import get_park as gp
 from TS import tsp
 
 
@@ -9,8 +10,8 @@ from TS import tsp
 conn, engine = uf.conn_to_db()
 
 # get Activities and Amenities
-activities = uf.import_data("select * from wanderwisely.activity_related_parks", conn)
-activities = activities["name"].unique()
+activities = uf.import_data("select * from wanderwisely.things_to_do_places", conn)
+activities = activities["activity_name"].unique()
 amenities = uf.import_data("select * from wanderwisely.amenity_related_parks", conn)
 amenities = amenities["name"].unique()
 # load data to map parkCode to parkName
@@ -28,15 +29,24 @@ def update_selection(selection, select_type):
         else:
             user_selection[select_type].append(selection)
 
+def initiate_selection():
+    user_selection["activities"] = []
+    user_selection["amenities"] = []
+    user_selection["pois"] = []
+    user_selection["hours"] = []
+    user_selection["park"] = []
+
 app = Flask(__name__)
 
 @app.route('/')
 def home():
+    initiate_selection()
     return render_template('home.html')
 
 
 @app.route('/ActivitiesAndAmenities')
 def ActivitiesAndAmenities():
+    initiate_selection()
     return render_template('ActivitiesAndAmenities.html', activities=activities, amenities=amenities)
 
 
@@ -51,7 +61,11 @@ def record_button():
 
 @app.route('/parks')
 def parks():
-    top_three_parks = ["Acadia National Park", "Arches National Park", 'Yosemite National Park']
+    # initiate parks in case users come back to the page
+    user_selection["park"] = []
+    amenity_names=user_selection['amenities']
+    activity_names=user_selection['activities']
+    top_three_parks = gp.get_park(amenity_names,activity_names)
     hours = [1,2,3,4,5,6,7,8,9,10,11,12]
     return render_template('parks.html',parks = top_three_parks, hours = hours)
 
@@ -66,11 +80,11 @@ def generate_places(parkName, activities):
 
 @app.route('/poi')
 def poi():
+    # initiate pois in case users come back to the page
+    user_selection["pois"] = []
     parkName = user_selection['park'][0]
     activities = user_selection['activities']
     places = generate_places(parkName, activities)
-    parkName = 'Yosemite National Park'
-    places = generate_places('Yosemite National Park', ['Hiking', 'Biking', 'Astronomy', 'Boating'])
     
     return render_template('poi.html', parkName=parkName, places=places)
 
@@ -78,15 +92,35 @@ def poi():
 # get lat/lon of selected places
 @app.route('/generate_route')
 def generate_route(): 
-    query = """select distinct thing_title, lat, lon from wanderwisely.things_to_do_places as table1
-    inner join wanderwisely.activity_related_parks as table2
-    on table1.parkCode = table2.parkCode
-    where parkName = '{}' AND thing_title in {} """ .format(*user_selection['park'], tuple(user_selection['pois']))
-    loca = uf.import_data(query, conn)
+    #query = """select distinct thing_title, lat, lon, duration from wanderwisely.things_to_do_places as table1
+    #inner join wanderwisely.activity_related_parks as table2
+    #on table1.parkCode = table2.parkCode
+    #where parkName = '{}' AND thing_title in {} """ .format(*user_selection['park'], tuple(user_selection['pois']))
+    #loca = uf.import_data(query, conn)
+
+    A = {"thing_title": "Hike Double Bubble Nubble Loop with Island Explorer", "lat":44.350011499069, 'lon':-68.2414535993951, "duration": 2.0}
+    B = {"thing_title": "Hike Great Head Trail", "lat": 44.3300018310546, 'lon':-68.1775283813476, "duration": 4.0}
+    C = {"thing_title": "Hike Ship Harbor Trail", "lat": 44.2284927368164, 'lon':-68.3237609863281, "duration": 1.0}
+    D = {"thing_title": "Hike Giant Slide Loop", "lat": 44.35079167, 'lon':-68.30218833, "duration": 4.0}
+    E = {"thing_title": "Hike Gorge Path", "lat": 44.372621, 'lon':-68.221942, "duration": 3.0}
+    F = {"thing_title": "Hike Wonderland Trail", "lat": 44.23383331298821, 'lon':-68.3199996948242, "duration": 0.5}
+    G = {"thing_title": "Hike Beachcroft Path", "lat": 44.3585023529493, 'lon':-68.2059851525353, "duration": 1.5}
+    loca = pd.DataFrame([A,B,C,D,E,F,G])
+    print(loca)
     #get route
-    shortest_path, shortest_time, shortest_distance = tsp(loca)
+    route_order, shortest_time, route_pair_distance, route_pair_time, duration, cal_time = tsp(loca)
+    total_time = shortest_time + sum(loca['duration'])
+    
+    print("shortest_path: ", route_order)
+    print("total: ", total_time)
+    print("route_pair_distance: ", route_pair_distance)
+    print("route_pair_time: ", route_pair_time)
+    print("duration: ", duration)
+    print("cal time: ", cal_time)
+
+    locations = '{"1":{"lat":44.372621,"lng":-68.221942},"2":{"lat":44.2284927368164,"lng": -68.3237609863281}}'
    
-    return render_template('generate_route.html', shortest_path = shortest_path, shortest_time = shortest_time, shortest_distance = shortest_distance)
+    return render_template('generate_route.html', locations = locations, route_order = route_order, total_time = total_time, route_pair_distance = route_pair_distance, route_pair_time = route_pair_time, duration = duration)
 
 
 @app.route('/contact')
