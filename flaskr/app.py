@@ -92,14 +92,23 @@ def poi():
 # get lat/lon of selected places
 @app.route('/generate_route')
 def generate_route(): 
-    query = """select distinct thing_title, lat, lon, duration from wanderwisely.things_to_do_places as table1
-    inner join wanderwisely.activity_related_parks as table2
-    on table1.parkCode = table2.parkCode
-    where parkName = '{}' AND thing_title in {} """ .format(*user_selection['park'], tuple(user_selection['pois']))
-    loca = uf.import_data(query, conn)
+    #query = """select distinct thing_title, lat, lon, duration from wanderwisely.things_to_do_places as table1
+    #inner join wanderwisely.activity_related_parks as table2
+    #on table1.parkCode = table2.parkCode
+    #where parkName = '{}' AND thing_title in {} """ .format(*user_selection['park'], tuple(user_selection['pois']))
+    #loca = uf.import_data(query, conn)
+
+    A = {"thing_title": "Hike Double Bubble Nubble Loop with Island Explorer", "lat":44.350011499069, 'lon':-68.2414535993951, "duration": 2.0}
+    B = {"thing_title": "Hike Great Head Trail", "lat": 44.3300018310546, 'lon':-68.1775283813476, "duration": 4.0}
+    C = {"thing_title": "Hike Ship Harbor Trail", "lat": 44.2284927368164, 'lon':-68.3237609863281, "duration": 1.0}
+    D = {"thing_title": "Hike Giant Slide Loop", "lat": 44.35079167, 'lon':-68.30218833, "duration": 4.0}
+    E = {"thing_title": "Hike Gorge Path", "lat": 44.372621, 'lon':-68.221942, "duration": 3.0}
+    F = {"thing_title": "Hike Wonderland Trail", "lat": 44.23383331298821, 'lon':-68.3199996948242, "duration": 0.5}
+    G = {"thing_title": "Hike Beachcroft Path", "lat": 44.3585023529493, 'lon':-68.2059851525353, "duration": 1.5}
+    loca = pd.DataFrame([A,B,C,D,E,F,G])
     print(loca)
     #get route
-    route_order, shortest_time, route_pair_distance, route_pair_time, duration, cal_time= tsp(loca)
+    route_order, shortest_time, route_pair_distance, route_pair_time, duration, cal_time = tsp(loca)
     total_time = shortest_time + sum(loca['duration'])
     
     print("shortest_path: ", route_order)
