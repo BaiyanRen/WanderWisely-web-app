@@ -118,9 +118,11 @@ def generate_route():
     print("duration: ", duration)
     print("cal time: ", cal_time)
 
-    locations = '{"1":{"lat":44.372621,"lng":-68.221942},"2":{"lat":44.2284927368164,"lng": -68.3237609863281}}'
-   
-    return render_template('generate_route.html', locations = locations, route_order = route_order, total_time = total_time, route_pair_distance = route_pair_distance, route_pair_time = route_pair_time, duration = duration)
+    locations = "[[44.350011499069,-68.2414535993951],[44.3300018310546,-68.1775283813476],[44.2284927368164,-68.3237609863281],[44.35079167,-68.30218833],[44.372621,-68.221942]]"
+    location_names = '["Hike_Double_Bubble_Nubble","Hike_Gorge_Path","Hike_Gorge_Path","Hike_Gorge_Path","Hike_Gorge_Path"]'
+  
+
+    return render_template('generate_route.html', locations = locations, location_names = location_names, route_order = route_order, total_time = total_time, route_pair_distance = route_pair_distance, route_pair_time = route_pair_time, duration = duration)
 
 
 @app.route('/contact')
