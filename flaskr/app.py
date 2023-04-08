@@ -109,9 +109,9 @@ def generate_route():
     # loca = pd.DataFrame([A,B,C,D,E,F,G])
     print(loca)
     #get route
-    route_order, shortest_time, route_pair_distance, route_pair_time, duration, cal_time = tsp(loca)
+    locations, route_order, shortest_time, route_pair_distance, route_pair_time, duration, cal_time = tsp(loca)
     total_time = shortest_time + sum(loca['duration'])
-    locations = str(list(map(list,zip(loca["lat"],loca['lon'])))).replace(", ", ",")
+
     
     
     print("shortest_path: ", route_order)

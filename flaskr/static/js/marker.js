@@ -11,8 +11,8 @@
 
 
 function initMap() {
-    var directionsService = new google.maps.DirectionsService();
-    var directionsRenderer = new google.maps.DirectionsRenderer();
+  var directionsService = new google.maps.DirectionsService();
+  var directionsRenderer = new google.maps.DirectionsRenderer();
     const myLatLng = { lat: 44.350011499069, lng: -68.2414535993951 };
     const map = new google.maps.Map(document.getElementById("map"), {
         zoom: 11,
@@ -33,9 +33,9 @@ function initMap() {
 
     // ];
 
-    console.log("aaaaaaaaaaaaa")
+    //console.log("aaaaaaaaaaaaa")
     const locations = JSON.parse(document.getElementById('locations').getAttribute("locations"))
-    console.log(locations)
+    //console.log(locations)
     // const objectRegex = /(\{(.*?)(\}('|")\}))/g;
 
     // const object = data.match(objectRegex).map(match => JSON.parse(match.replace(/'(.*?)':/g, '"$1":').replace(/'{/g, '{').replace(/\}'/g, '}')));
@@ -47,7 +47,7 @@ function initMap() {
     // console.log("aaaaaaaaaaaaa")
 
     locations.map((position, i) => {
-       
+      
         var poi = new google.maps.LatLng(position[0], position[1]);
         //const label = labels[i % labels.length];
         let num = i
@@ -56,7 +56,6 @@ function initMap() {
             map,
             label: num.toString(),
         })
-
     });
 
     // const flightPlanCoordinates = [
@@ -78,10 +77,38 @@ function initMap() {
     //     strokeWeight: 2,
     // });
 
-    flightPath.setMap(map);
+    //flightPath.setMap(map);
 
+directionsRenderer.setMap(map)
+
+calcRoute(directionsService, directionsRenderer, locations)
 }
 
+
+function calcRoute(directionsService, directionsRenderer, locations) {
+  const waypts = [];
+
+  for (let i = 1; i < locations.length-1; i++) {
+      console.log(i)
+      waypts.push({
+        location: new google.maps.LatLng(locations[i][0], locations[i][1]),
+        stopover: true,
+      });
+  }
+  console.log(waypts)
+
+  directionsService
+    .route({
+      origin: new google.maps.LatLng(locations[0][0], locations[0][1]),
+      destination: new google.maps.LatLng(locations[locations.length-1][0], locations[locations.length-1][1]),
+      waypoints: waypts,
+      optimizeWaypoints: true,
+      travelMode: google.maps.TravelMode.DRIVING,
+    })
+    .then((response) => {
+      directionsRenderer.setDirections(response);
+})
+}
 
 
 window.initMap = initMap;
