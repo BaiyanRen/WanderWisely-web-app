@@ -70,6 +70,7 @@ def parks():
     hours = [1,2,3,4,5,6,7,8,9,10,11,12]
     return render_template('parks.html',parks = top_three_parks, hours = hours)
 
+
 def generate_places(parkName, activities):
     parkCode = parks_df[parks_df['parkName'] == parkName]['parkCode'].tolist()[0]
     activities = "','".join(activities)
@@ -110,10 +111,14 @@ def generate_route():
     print(loca)
     #get route
     locations, route_order, shortest_time, route_pair_distance, route_pair_time, duration, cal_time = tsp(loca)
-    total_time = shortest_time + sum(loca['duration'])
+    total_time = round(shortest_time + sum(loca['duration']), 2)
 
-    
-    
+    # load images for places
+    route_order_sql = "','".join(route_order)
+    query = f"select thing_title, image_url, place_url from wanderwisely.things_to_do_places where thing_title in ('{route_order_sql}')"
+    route_data = uf.import_data(query, conn)
+    route_data_dict = route_data.set_index('thing_title').to_dict()
+    print("dictionary of route data: ", route_data_dict)
     print("shortest_path: ", route_order)
     print("total: ", total_time)
     print("route_pair_distance: ", route_pair_distance)
@@ -123,8 +128,9 @@ def generate_route():
     print("locations type: ", type(locations))
     print("locations: ", locations)
 
-   
-    return render_template('generate_route.html', locations = locations, route_order = route_order, total_time = total_time, route_pair_distance = route_pair_distance, route_pair_time = route_pair_time, duration = duration)
+    return render_template('generate_route.html', locations = locations, route_order = route_order,
+                           total_time = total_time, route_pair_distance = route_pair_distance,
+                           route_pair_time = route_pair_time, duration = duration, route_data_dict = route_data_dict)
 
 
 @app.route('/contact')
