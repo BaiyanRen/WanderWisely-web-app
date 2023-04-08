@@ -98,18 +98,22 @@ def tsp(loca):
     pair_time_route = OrderedDict() # only save travel time of possible 2 POI combinations from shortest path
     pair_distance_route = OrderedDict() # only save travel distance of possible 2 POI combinations from shortest path
     duration = OrderedDict()
- 
+    
+    for pair in itertools.combinations(loca['thing_title'],2):
+        a_position = [float(loca[loca['thing_title'] == pair[0]]['lat']), float(loca[loca['thing_title'] == pair[0]]['lon'])]
+        b_position = [float(loca[loca['thing_title'] == pair[1]]['lat']), float(loca[loca['thing_title'] == pair[1]]['lon'])]
+        direction = distance(a_position, b_position)
+        pair_time_all[(pair[0],pair[1])] = direction[0]
+        pair_time_all[(pair[1],pair[0])] = direction[0]
+        pair_distance_all[(pair[0],pair[1])] = direction[1]
+        pair_distance_all[(pair[1],pair[0])] = direction[1]
+    
     for path in itertools.permutations(loca['thing_title']):
         total_distance = 0
         total_time = 0
         for i in range(len(path) - 1):
-            a_position = [float(loca[loca['thing_title'] == path[i]]['lat']), float(loca[loca['thing_title'] == path[i]]['lon'])]
-            b_position = [float(loca[loca['thing_title'] == path[i+1]]['lat']), float(loca[loca['thing_title'] == path[i+1]]['lon'])]
-            direction = distance(a_position, b_position)
-            pair_time_all[(path[i],path[i+1])] = direction[0]
-            pair_distance_all[(path[i],path[i+1])] = direction[1]
-            total_time += direction[0]
-            total_distance += direction[1]
+            total_time += pair_time_all[(path[i],path[i+1])]
+            total_distance += pair_distance_all[(path[i],path[i+1])]
         if total_time < shortest_time:
             shortest_time = total_time
             route_distance = total_distance
@@ -136,11 +140,15 @@ if __name__ == '__main__':
     E = {"thing_title": "Hike Gorge Path", "lat": 44.372621, 'lon':-68.221942, "duration": 3.0}
     loca = pd.DataFrame([A,B,C])
 
-    #Example2 yell park
-    # A = {"thing_title": "Natural Bridge Trail", "lat":40.754898, 'lon':-122.323452}
-    # B = {"thing_title":"Ribbon Lake Trail", "lat": 44.719745, 'lon':-110.485320}
-    # C = {"thing_title": "Beaver Ponds Trail", "lat": 44.967939, 'lon':-110.704438}
-    # loca = pd.DataFrame([A,B,C])
+#Example1 acad park
+A = {"thing_title": "Hike Double Bubble Nubble Loop with Island Explorer", "lat":44.350011499069, 'lon':-68.2414535993951, "duration": 2.0}
+B = {"thing_title": "Hike Great Head Trail", "lat": 44.3300018310546, 'lon':-68.1775283813476, "duration": 4.0}
+C = {"thing_title": "Hike Ship Harbor Trail", "lat": 44.2284927368164, 'lon':-68.3237609863281, "duration": 1.0}
+D = {"thing_title": "Hike Giant Slide Loop", "lat": 44.35079167, 'lon':-68.30218833, "duration": 4.0}
+E = {"thing_title": "Hike Gorge Path", "lat": 44.372621, 'lon':-68.221942, "duration": 3.0}
+F = {"thing_title": "Hike Wonderland Trail", "lat": 44.23383331298821, 'lon':-68.3199996948242, "duration": 0.5}
+G = {"thing_title": "Hike Beachcroft Path", "lat": 44.3585023529493, 'lon':-68.2059851525353, "duration": 1.5}
+loca = pd.DataFrame([A,B,C,D,E,F,G])
 
     shortest_path, shortest_time, pair_distance_route, pair_time_route, duration, cal_time = tsp(loca)
     print("Shortest path:", shortest_path)
@@ -150,9 +158,10 @@ if __name__ == '__main__':
     print("Calculation time:", cal_time)
     print("duration: ", duration)
 
-    time_matrix, distance_matrix = get_matrix(loca)
-
-    permutation, distance = solve_tsp_dynamic_programming(time_matrix)
-
-    print(permutation, distance)
-
+shortest_path, shortest_time, pair_distance_route, pair_time_route, duration, cal_time = tsp(loca)
+# print("Shortest path:", shortest_path)
+# print("Shortest time in hour :", shortest_time)
+# print("Route distance in mile:", pair_distance_route)
+# print("Pairs time:", pair_time_route)
+#print("Calculation time:", cal_time)
+#print("duration: ", duration)
