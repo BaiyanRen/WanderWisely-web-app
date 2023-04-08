@@ -62,10 +62,14 @@
     <!-- header section end -->
     <!-- itinerary section starts -->
     <!--<h1> Itinerary</h1>
+    <!--<h2 class="services_section"> Total Time is {{total_time}} hours</h2>
     <div style="width: 30%; margin: 20px 20px 20px">
         {% for poi in route_order %}
         <div style="padding: 2px; background-color: #EEE; margin: 2px">
-            <p style="font-size: 20px">{{ poi }}</p>
+            <p style="font-size: 20px">Point of Interest: {{ poi }}</p>
+            <p style="font-size: 20px">Distance to next POI: {{ route_pair_distance[poi, route_order[route_order.index(poi)+1]] }} km</p>
+            <p style="font-size: 20px">Travel time to next POI: {{ route_pair_time[poi, route_order[route_order.index(poi)+1]] }} hours</p>
+            <p style="font-size: 20px">Duration in this POI: {{ duration[poi]}} hours</p>
         </div>
         <span style="font-size: 24px">&#8595;</span>
         {% endfor %}-->
