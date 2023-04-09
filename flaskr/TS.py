@@ -122,36 +122,39 @@ def tsp(loca):
       
     for i in range(len(shortest_path)-1):
         if (shortest_path[i], shortest_path[i+1]) in pair_time_all.keys():
-            pair_time_route[(shortest_path[i], shortest_path[i+1])] = pair_time_all[(shortest_path[i], shortest_path[i+1])]
-            pair_distance_route[(shortest_path[i], shortest_path[i+1])] = pair_distance_all[(shortest_path[i], shortest_path[i+1])]
+            pair_time_route[(shortest_path[i], shortest_path[i+1])] = round(pair_time_all[(shortest_path[i], shortest_path[i+1])],1)
+            pair_distance_route[(shortest_path[i], shortest_path[i+1])] = round(pair_distance_all[(shortest_path[i], shortest_path[i+1])],1)
     for i in range(len(shortest_path)): 
         duration[shortest_path[i]] = float(loca[loca["thing_title"] == shortest_path[i]]["duration"])
         locations.append([float(loca[loca["thing_title"] == shortest_path[i]]["lat"]), float(loca[loca["thing_title"] == shortest_path[i]]["lon"])])
         
     locations = str(locations).replace(", ", ",")
+    
+    location_names = str(list(shortest_path)).replace(", ", ",").replace(" ","_").replace("'","\"")
                     
     end = datetime.now()
     cal_time = end - start
-    return locations, shortest_path, shortest_time, pair_distance_route, pair_time_route, duration, cal_time
+    return locations, location_names, shortest_path, round(shortest_time,1), pair_distance_route, pair_time_route, duration, cal_time
 
-if __name__ == '__main__':
 
 #Example1 acad park
-# A = {"thing_title": "Hike Double Bubble Nubble Loop with Island Explorer", "lat":44.350011499069, 'lon':-68.2414535993951, "duration": 2.0}
-# B = {"thing_title": "Hike Great Head Trail", "lat": 44.3300018310546, 'lon':-68.1775283813476, "duration": 4.0}
-# C = {"thing_title": "Hike Ship Harbor Trail", "lat": 44.2284927368164, 'lon':-68.3237609863281, "duration": 1.0}
-# D = {"thing_title": "Hike Giant Slide Loop", "lat": 44.35079167, 'lon':-68.30218833, "duration": 4.0}
-# E = {"thing_title": "Hike Gorge Path", "lat": 44.372621, 'lon':-68.221942, "duration": 3.0}
-# F = {"thing_title": "Hike Wonderland Trail", "lat": 44.23383331298821, 'lon':-68.3199996948242, "duration": 0.5}
-# G = {"thing_title": "Hike Beachcroft Path", "lat": 44.3585023529493, 'lon':-68.2059851525353, "duration": 1.5}
-# loca = pd.DataFrame([A,B,C,D])
+A = {"thing_title": "Hike Double Bubble Nubble Loop with Island Explorer", "lat":44.350011499069, 'lon':-68.2414535993951, "duration": 2.0}
+B = {"thing_title": "Hike Great Head Trail", "lat": 44.3300018310546, 'lon':-68.1775283813476, "duration": 4.0}
+C = {"thing_title": "Hike Ship Harbor Trail", "lat": 44.2284927368164, 'lon':-68.3237609863281, "duration": 1.0}
+D = {"thing_title": "Hike Giant Slide Loop", "lat": 44.35079167, 'lon':-68.30218833, "duration": 4.0}
+E = {"thing_title": "Hike Gorge Path", "lat": 44.372621, 'lon':-68.221942, "duration": 3.0}
+F = {"thing_title": "Hike Wonderland Trail", "lat": 44.23383331298821, 'lon':-68.3199996948242, "duration": 0.5}
+G = {"thing_title": "Hike Beachcroft Path", "lat": 44.3585023529493, 'lon':-68.2059851525353, "duration": 1.5}
+loca = pd.DataFrame([A,B,C,D])
 
-# locations, shortest_path, shortest_time, pair_distance_route, pair_time_route, duration, cal_time = tsp(loca)
-# print("Shortest path:", shortest_path)
-# print("Shortest time in hour :", shortest_time)
-# print("Route distance in mile:", pair_distance_route)
-# print("Pairs time:", pair_time_route)
-# print("Calculation time:", cal_time)
-# print("duration: ", duration)
-# print("locations: ", locations)
+locations, locations_names, shortest_path, shortest_time, pair_distance_route, pair_time_route, duration, cal_time = tsp(loca)
+print("Shortest path:", shortest_path)
+print("Shortest time in hour :", shortest_time)
+print("Route distance in mile:", pair_distance_route)
+print("Pairs time:", pair_time_route)
+print("Calculation time:", cal_time)
+print("duration: ", duration)
+print("locations: ", locations)
+print("locations names: ", locations_names)
+
 

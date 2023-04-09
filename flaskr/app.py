@@ -3,6 +3,7 @@ import pandas as pd
 import helper_functions as uf
 import get_park as gp
 from TS import tsp
+from math import ceil
 
 
 
@@ -93,7 +94,8 @@ def poi():
 
 # get lat/lon of selected places
 @app.route('/generate_route')
-def generate_route(): 
+def generate_route():
+    conn, engine = uf.conn_to_db()
     query = """select distinct thing_title, lat, lon, duration from wanderwisely.things_to_do_places as table1
     inner join wanderwisely.activity_related_parks as table2
     on table1.parkCode = table2.parkCode
@@ -108,9 +110,10 @@ def generate_route():
     # F = {"thing_title": "Hike Wonderland Trail", "lat": 44.23383331298821, 'lon':-68.3199996948242, "duration": 0.5}
     # G = {"thing_title": "Hike Beachcroft Path", "lat": 44.3585023529493, 'lon':-68.2059851525353, "duration": 1.5}
     # loca = pd.DataFrame([A,B,C,D,E,F,G])
+
     print(loca)
     #get route
-    locations, route_order, shortest_time, route_pair_distance, route_pair_time, duration, cal_time = tsp(loca)
+    locations, location_names, route_order, shortest_time, route_pair_distance, route_pair_time, duration, cal_time = tsp(loca)
     total_time = round(shortest_time + sum(loca['duration']), 2)
 
     # load images for places
@@ -118,6 +121,8 @@ def generate_route():
     query = f"select thing_title, image_url, place_url from wanderwisely.things_to_do_places where thing_title in ('{route_order_sql}')"
     route_data = uf.import_data(query, conn)
     route_data_dict = route_data.set_index('thing_title').to_dict()
+    days = ceil(total_time/float(user_selection["hours"][0]))
+
     print("dictionary of route data: ", route_data_dict)
     print("shortest_path: ", route_order)
     print("total: ", total_time)
@@ -128,9 +133,12 @@ def generate_route():
     print("locations type: ", type(locations))
     print("locations: ", locations)
 
-    return render_template('generate_route.html', locations = locations, route_order = route_order,
+
+    return render_template('generate_route.html', park = user_selection['park'][0], locations = locations, days = days, route_order = route_order,
                            total_time = total_time, route_pair_distance = route_pair_distance,
                            route_pair_time = route_pair_time, duration = duration, route_data_dict = route_data_dict)
+
+
 
 
 @app.route('/contact')
