@@ -37,51 +37,87 @@
 <body>
     <!-- header section start -->
     <div class="header_section">
-        <div class="header_main">
+         <div class="header_main">
             <div class="mobile_menu">
-                <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                    <div class="logo_mobile"><a href="index.html"><img src="static/images/logo.png"></a></div>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                </nav>
+               <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                  <div class="logo_mobile"><a href="{{ url_for('home')}}"><img src="static/images/logo.png"></a></div>
+                  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarNav">
+                     <ul class="navbar-nav">
+                        <li class="nav-item">
+                           <a class="nav-link" href="{{ url_for('home')}}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                           <a class="nav-link" href="{{url_for('ActivitiesAndAmenities')}}">Activities and Amenities</a>
+                        </li>
+                        <li class="nav-item">
+                           <a class="nav-link " href="https://github.com/BaiyanRen/WanderWisely-web-app">GitHub</a>
+                        </li>
+                        <li class="nav-item">
+                           <a class="nav-link " href="contact.html">Contact</a>
+                        </li>
+                     </ul>
+                  </div>
+               </nav>
             </div>
             <div class="container-fluid">
-                <div class="logo"><a href="index.html"><img src="static/images/logo.png"></a></div>
-                <div class="menu_main">
-                    <ul>
-                        <li class="active"><a href="/">Home</a></li>
-                        <li><a href="{{url_for('ActivitiesAndAmenities')}}">Activities And Amenities</a></li>
-                        <li><a href="https://github.com/BaiyanRen/WanderWisely-web-app">Github</a></li>
-                        <li><a href="{{url_for('contact')}}">Contact us</a></li>
-                    </ul>
-                </div>
+               <div class="logo"><a href="{{ url_for('home')}}"><img src="static/images/logo.png"></a></div>
+               <div class="menu_main">
+                  <ul>
+                     <li class="active"><a href="{{ url_for('home')}}">Home</a></li>
+                     <li><a href="{{url_for('ActivitiesAndAmenities')}}">Activities and Amenities</a></li>
+                     <li><a href="https://github.com/BaiyanRen/WanderWisely-web-app">GitHub</a></li>
+                     <li><a href="contact.html">Contact us</a></li>
+                  </ul>
+               </div>
             </div>
-        </div>
-    </div>
+         </div>
+      </div>
     <!-- header section end -->
     <!-- itinerary section starts -->
-    <!--<h1> Detail </h1>
-    <!--<h2 class="services_section"> Total Time is {{total_time}} hours</h2>
+    <h1> Detail </h1>
+    <h2 class="services_section"> Total Time is {{total_time}} hours</h2>
     <div style="width: 30%; margin: 20px 20px 20px">
         {% for poi in route_order %}
         <div style="padding: 2px; background-color: #EEE; margin: 2px">
             <p style="font-size: 20px">Point of Interest: {{ poi }}</p>
+            <a href={{route_data_dict['place_url'][poi]}}><img src={{route_data_dict['image_url'][poi]}} alt={{poi}} width="300" height="100"></a>
             <p style="font-size: 20px">Distance to next POI: {{ route_pair_distance[poi, route_order[route_order.index(poi)+1]] }} km</p>
             <p style="font-size: 20px">Travel time to next POI: {{ route_pair_time[poi, route_order[route_order.index(poi)+1]] }} hours</p>
             <p style="font-size: 20px">Duration in this POI: {{ duration[poi]}} hours</p>
         </div>
         <span style="font-size: 24px">&#8595;</span>
-        {% endfor %}-->
-    <!--</div>-->
+        {% endfor %}
+    </div>
     <!-- itinerary section section end -->
 
+        <!-- copyright section start -->
+        <div class="copyright_section">
+            <div class="container">
+                <p class="copyright_text">2020 All Rights Reserved. Design by <a href="https://html.design">Free html  Templates</a></p>
+            </div>
+        </div>
+        <!-- copyright section end -->
+        <!-- Javascript files-->
+        <script src="static/js/jquery.min.js"></script>
+        <script src="static/js/popper.min.js"></script>
+        <script src="static/js/bootstrap.bundle.min.js"></script>
+        <script src="static/js/jquery-3.0.0.min.js"></script>
+        <script src="static/js/plugin.js"></script>
+        <!-- sidebar -->
+        <script src="static/js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="static/js/custom.js"></script>
+        <!-- javascript -->
+        <script src="static/js/owl.carousel.js"></script>
+        <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
 
     <h3>Your Itinerary</h3>
     <div id="map"></div>
     <!-- prettier-ignore -->
+    <script type='text/javascript' src="static/js/marker.js">setLocations(22)</script>
     <div id="locations" locations={{ locations }}></div>
-    <div id="location_names" location_names={{ location_names }}></div>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHD-lOFZgRIJiSSyGzA51S5jFZ6b386NU&callback=initMap&v=weekly"></script>
 
 
