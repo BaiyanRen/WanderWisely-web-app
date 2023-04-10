@@ -1,6 +1,6 @@
-import pymysql
+
 import pandas as pd
-import helper_functions as uf
+import flaskr.helper_functions as uf
 conn, engine = uf.conn_to_db()
 
 def get_park(amenity_names,activity_names):
