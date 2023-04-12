@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request
 import pandas as pd
-import helper_functions as uf
-import get_park as gp
-from TS import tsp
+from flaskr import helper_functions as uf
+from flaskr import get_park as gp
+from flaskr.TS import tsp
 from math import ceil
 
 
