@@ -24,28 +24,28 @@ function initMap() {
     });
 
 
-    //const svgMarker = {
-    //    path: "M-1.547 12l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM0 0q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z",
-    //    fillColor: "#00468b",
-    //    fillOpacity: 1,
-    //    strokeWeight: 0,
-    //    rotation: 0,
-    //    scale: 2,
-    //    anchor: new google.maps.Point(0, 20),
-    //};
+    const svgMarker = {
+        path: "M22,9.81a1,1,0,0,0-.83-.69l-5.7-.78L12.88,3.53a1,1,0,0,0-1.76,0L8.57,8.34l-5.7.78a1,1,0,0,0-.82.69,1,1,0,0,0,.28,1l4.09,3.73-1,5.24A1,1,0,0,0,6.88,20.9L12,18.38l5.12,2.52a1,1,0,0,0,.44.1,1,1,0,0,0,1-1.18l-1-5.24,4.09-3.73A1,1,0,0,0,22,9.81Z",
+        fillColor: "#00468b",
+        fillOpacity: 1,
+        strokeWeight: 0,
+        rotation: 0,
+        scale: 0.5,
+        anchor: new google.maps.Point(0, 20),
+    };
 
-    //laglngs.map((laglng, i) => {
-    //    let num = i
-    //    new google.maps.Marker({
-    //        position: laglng,
-    //        map: map,
-    //        icon: svgMarker,
-    //        //label: num.toString(),
-    //        animation: google.maps.Animation.DROP,
-    //        // title: location_names[i].replaceAll("_"," "),
-    //    })
+    laglngs.map((laglng, i) => {
+        let num = i
+        new google.maps.Marker({
+            position: laglng,
+            map: map,
+            icon: svgMarker,
+            //label: num.toString(),
+            animation: google.maps.Animation.DROP,
+            // title: location_names[i].replaceAll("_"," "),
+        })
 
-    //});
+    });
 
 
 
