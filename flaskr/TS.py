@@ -124,7 +124,7 @@ def tsp(loca):
         if (shortest_path[i], shortest_path[i+1]) in pair_time_all.keys():
             pair_time_route[(shortest_path[i], shortest_path[i+1])] = round(pair_time_all[(shortest_path[i], shortest_path[i+1])],1)
             pair_distance_route[(shortest_path[i], shortest_path[i+1])] = round(pair_distance_all[(shortest_path[i], shortest_path[i+1])],1)
-    for i in range(len(shortest_path)): 
+    for i in range(len(shortest_path)):
         duration[shortest_path[i]] = float(loca[loca["thing_title"] == shortest_path[i]]["duration"])
         locations.append([float(loca[loca["thing_title"] == shortest_path[i]]["lat"]), float(loca[loca["thing_title"] == shortest_path[i]]["lon"])])
         
