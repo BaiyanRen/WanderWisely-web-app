@@ -3,9 +3,11 @@ import pandas as pd
 
 from flaskr import helper_functions as uf
 
-conn, engine = uf.conn_to_db()
+
 
 def get_park(amenity_names,activity_names):
+
+        conn, engine = uf.conn_to_db()
         amenity_names = "','".join(amenity_names)
         activity_names="','".join(activity_names)
         parks_df = uf.import_data(f"select parkCode,parkName from wanderwisely.activity_related_parks", conn)
@@ -14,6 +16,9 @@ def get_park(amenity_names,activity_names):
         query_activity= f"select parkCode,activity_name from wanderwisely.things_to_do_places where activity_name in ('{activity_names}')"
         df_amenity = uf.import_data(query_amenity, conn)
         df_activity = uf.import_data(query_activity, conn)
+        conn.close()
+        engine.dispose()
+
         df_activity= pd.merge(df_activity, parks_df, on='parkCode', how='inner')
         df_amenity['parkname_count'] = df_amenity.groupby('parkName')['name'].transform('count')
         df_amenties = df_amenity[['parkName', 'parkname_count']].drop_duplicates(subset='parkName').reset_index(drop=True)

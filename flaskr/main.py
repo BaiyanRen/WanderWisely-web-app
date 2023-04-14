@@ -9,17 +9,6 @@ from math import ceil
 
 
 
-# build database connection
-
-conn, engine = uf.conn_to_db()
-
-# get Activities and Amenities
-activities = uf.import_data("select * from wanderwisely.things_to_do_places", conn)
-activities = activities["activity_name"].unique()
-amenities = uf.import_data("select * from wanderwisely.amenity_related_parks", conn)
-amenities = amenities["name"].unique()
-# load data to map parkCode to parkName
-parks_df = uf.import_data(f"select * from wanderwisely.activity_related_parks", conn)
 
 # record user's selection
 user_selection = {"activities": [], "amenities": [], "pois": [],"hours":[], "park":[]}
@@ -51,6 +40,17 @@ def home():
 @app.route('/ActivitiesAndAmenities')
 def ActivitiesAndAmenities():
     initiate_selection()
+    conn, engine = uf.conn_to_db()
+
+    # get Activities and Amenities
+    activities = uf.import_data("select * from wanderwisely.things_to_do_places", conn)
+    activities = activities["activity_name"].unique()
+    amenities = uf.import_data("select * from wanderwisely.amenity_related_parks", conn)
+    amenities = amenities["name"].unique()
+
+    conn.close()
+    engine.dispose()
+
     return render_template('ActivitiesAndAmenities.html', activities=activities, amenities=amenities)
 
 
@@ -59,7 +59,7 @@ def record_button():
     data = request.get_json()
     update_selection(data["input"], data["type"])
     # Record the button click in the database or perform any other action
-    print(user_selection)
+    # print(user_selection)
     return '', 204
 
 
@@ -75,10 +75,16 @@ def parks():
 
 
 def generate_places(parkName, activities):
+    conn, engine = uf.conn_to_db()
+    # load data to map parkCode to parkName
+    parks_df = uf.import_data(f"select * from wanderwisely.activity_related_parks", conn)
+
     parkCode = parks_df[parks_df['parkName'] == parkName]['parkCode'].tolist()[0]
     activities = "','".join(activities)
     query = f"select thing_title from wanderwisely.things_to_do_places where parkCode = '{parkCode}' and activity_name in ('{activities}')"
     places_df = uf.import_data(query, conn)
+    conn.close()
+    engine.dispose()
     filtered_places = places_df['thing_title'].to_list()
     return filtered_places
 
@@ -104,6 +110,8 @@ def generate_route():
     where parkName = '{}' AND thing_title in {} """ .format(*user_selection['park'], tuple(user_selection['pois']))
     loca = uf.import_data(query, conn)
 
+
+
     # A = {"thing_title": "Hike Double Bubble Nubble Loop with Island Explorer", "lat":44.350011499069, 'lon':-68.2414535993951, "duration": 2.0}
     # B = {"thing_title": "Hike Great Head Trail", "lat": 44.3300018310546, 'lon':-68.1775283813476, "duration": 4.0}
     # C = {"thing_title": "Hike Ship Harbor Trail", "lat": 44.2284927368164, 'lon':-68.3237609863281, "duration": 1.0}
@@ -115,25 +123,33 @@ def generate_route():
 
     print(loca)
     #get route
+
     locations, location_names, route_order, shortest_time, route_pair_distance, route_pair_time, duration, cal_time = tsp(loca)
     total_time = round(shortest_time + sum(loca['duration']), 2)
+
+    
 
     # load images for places
     route_order_sql = "','".join(route_order)
     query = f"select thing_title, image_url, place_url from wanderwisely.things_to_do_places where thing_title in ('{route_order_sql}')"
+
+
     route_data = uf.import_data(query, conn)
+    conn.close()
+    engine.dispose()
+
     route_data_dict = route_data.set_index('thing_title').to_dict()
     days = ceil(total_time/float(user_selection["hours"][0]))
 
-    print("dictionary of route data: ", route_data_dict)
-    print("shortest_path: ", route_order)
-    print("total: ", total_time)
-    print("route_pair_distance: ", route_pair_distance)
-    print("route_pair_time: ", route_pair_time)
-    print("duration: ", duration)
-    print("cal time: ", cal_time)
-    print("locations type: ", type(locations))
-    print("locations: ", locations)
+    #print("dictionary of route data: ", route_data_dict)
+    #print("shortest_path: ", route_order)
+    #print("total: ", total_time)
+    #print("route_pair_distance: ", route_pair_distance)
+    #print("route_pair_time: ", route_pair_time)
+    #print("duration: ", duration)
+    #print("cal time: ", cal_time)
+    #print("locations type: ", type(locations))
+    #print("locations: ", locations)
 
 
     return render_template('generate_route.html', park = user_selection['park'][0], locations = locations, days = days, route_order = route_order,
