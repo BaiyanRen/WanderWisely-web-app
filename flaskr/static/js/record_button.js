@@ -30,3 +30,21 @@ function toggleButtonOne(button, input, type) {
 
     recordButton(input, type);
 }
+
+function imgSelection(img, input, type) {
+
+    if (img.classList.contains('clicked')) {
+        img.classList.remove('clicked')
+        img.classList.add('unclicked')
+        img.style.opacity = 1
+        
+    } else {
+        img.classList.remove('unclicked');
+        img.classList.add('clicked')
+        img.style.opacity = 0.3
+    }
+
+
+
+    recordButton(input, type);
+}
