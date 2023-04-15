@@ -104,7 +104,7 @@ def poi():
 # get lat/lon of selected places
 @app.route('/generate_route')
 def generate_route():
-    
+    print(user_selection)
     conn, engine = uf.conn_to_db()
     query = """select distinct thing_title, lat, lon, duration from wanderwisely.things_to_do_places as table1
     inner join wanderwisely.activity_related_parks as table2
