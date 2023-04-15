@@ -4,7 +4,7 @@ import pandas as pd
 from flaskr import helper_functions as uf
 from flaskr import get_park as gp
 from flask import Flask, session
-from flask_session import Session
+# from flask_session import Session
 from flaskr.TS import tsp
 from math import ceil
 import random
@@ -17,7 +17,7 @@ secret = ''.join(random.choices(string.ascii_uppercase + string.digits, k=40))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secret
 app.config['SESSION_TYPE'] = 'filesystem'
-Session(app)
+# Session(app)
 
 
 # record user's selection
