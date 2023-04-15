@@ -4,7 +4,7 @@ import pandas as pd
 from flaskr import helper_functions as uf
 from flaskr import get_park as gp
 from flask import Flask, session
-# from flask_session import Session
+from flask_session import Session
 from flaskr.TS import tsp
 from math import ceil
 import random
@@ -17,12 +17,17 @@ secret = ''.join(random.choices(string.ascii_uppercase + string.digits, k=40))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secret
 app.config['SESSION_TYPE'] = 'filesystem'
-# Session(app)
+Session(app)
 
+@app.route('/set/')
+def set():
+    user_selection = {"activities": [], "amenities": [], "pois": [],"hours":[], "park":[]}
+    session["user_selection"]  = user_selection
+    return 'ok'
 
 # record user's selection
-session[secret] = {"activities": [], "amenities": [], "pois": [],"hours":[], "park":[]}
-    
+# user_selection = {"activities": [], "amenities": [], "pois": [],"hours":[], "park":[]}
+# session["user_selection"]  = user_selection
 
 def update_selection(selection, select_type):
     if select_type == "hours" or select_type == "park":
@@ -44,6 +49,7 @@ def initiate_selection():
 
 @app.route('/')
 def home():
+    set()
     initiate_selection()
     return render_template('home.html')
 
@@ -92,7 +98,7 @@ def generate_places(parkName, activities):
 
     parkCode = parks_df[parks_df['parkName'] == parkName]['parkCode'].tolist()[0]
     activities = "','".join(activities)
-    query = f"select thing_title, place_url, image_url from wanderwisely.things_to_do_places where parkCode = '{parkCode}' and activity_name in ('{activities}')"
+    query = f"select thing_title, place_url, image_url from wanderwisely.things_to_do_places where parkCode = '{parkCode}' and activity_name in ('{activities}') limit 20"
     places_df = uf.import_data(query, conn)
     conn.close()
     engine.dispose()
