@@ -80,12 +80,14 @@
             <h1 class="services_taital">Places </h1>
             <p class="services_text">Based on your interest in activities, we recommend these places in {{ parkName }}</p>
             <div class="services_section_2">
-               <div class="row">
-                  {% for place in places %}
-                     <div class="btn_main"><a href="#" onclick="toggleButtonColor(this, '{{ place }}','pois'); return false;">{{place}}</a></div>
-                  {%endfor%}
-               </div>
-            </div>
+                <div class="row">
+                    {% for place in places %}
+                    <!--<div class="btn_main"><a href="#" onclick="toggleButtonColor(this, '{{ place }}','pois'); return false;">{{place}}</a></div>-->
+                    <div class="btn_pic">
+                        <a href="#" onclick="imgSelection(this, '{{ place }}','pois'); return false;"><img src={{urls.loc[urls["thing_title"]==place]["image_url"].item()}} alt ="{{ place }}" width="100" height="100" class="image_clickable"></a>
+                    </div>
+                    {%endfor%}
+                </div>
          </div>
       </div>
 

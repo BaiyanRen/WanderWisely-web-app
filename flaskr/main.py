@@ -59,7 +59,7 @@ def record_button():
     data = request.get_json()
     update_selection(data["input"], data["type"])
     # Record the button click in the database or perform any other action
-    # print(user_selection)
+    print(user_selection)
     return '', 204
 
 
@@ -81,12 +81,13 @@ def generate_places(parkName, activities):
 
     parkCode = parks_df[parks_df['parkName'] == parkName]['parkCode'].tolist()[0]
     activities = "','".join(activities)
-    query = f"select thing_title from wanderwisely.things_to_do_places where parkCode = '{parkCode}' and activity_name in ('{activities}')"
+    query = f"select thing_title, place_url, image_url from wanderwisely.things_to_do_places where parkCode = '{parkCode}' and activity_name in ('{activities}')"
     places_df = uf.import_data(query, conn)
     conn.close()
     engine.dispose()
-    filtered_places = places_df['thing_title'].to_list()
-    return filtered_places
+    pois = places_df['thing_title'].to_list()
+    urls = places_df[["thing_title", "place_url", "image_url"]]
+    return pois, urls
 
 
 @app.route('/poi')
@@ -95,9 +96,9 @@ def poi():
     user_selection["pois"] = []
     parkName = user_selection['park'][0]
     activities = user_selection['activities']
-    places = generate_places(parkName, activities)
+    places, urls = generate_places(parkName, activities)
     
-    return render_template('poi.html', parkName=parkName, places=places)
+    return render_template('poi.html', parkName=parkName, places=places, urls = urls)
 
 
 # get lat/lon of selected places
