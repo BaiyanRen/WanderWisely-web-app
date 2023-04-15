@@ -3,33 +3,44 @@ from flask import Flask, render_template, request
 import pandas as pd
 from flaskr import helper_functions as uf
 from flaskr import get_park as gp
-
+from flask import Flask, session
+from flask_session import Session
 from flaskr.TS import tsp
 from math import ceil
+import random
+import string
 
 
+
+# initiate user session
+secret = ''.join(random.choices(string.ascii_uppercase + string.digits, k=40))
+app = Flask(__name__)
+app.config['SECRET_KEY'] = secret
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
 
 
 # record user's selection
-user_selection = {"activities": [], "amenities": [], "pois": [],"hours":[], "park":[]}
+session[secret] = {"activities": [], "amenities": [], "pois": [],"hours":[], "park":[]}
+    
 
 def update_selection(selection, select_type):
     if select_type == "hours" or select_type == "park":
-            user_selection[select_type] = [selection]
+            session['user_selection'][select_type] = [selection]
     else: # when select_type == amenities, activities, pois
-        if selection in user_selection[select_type]:
-            user_selection[select_type].remove(selection)
+        if selection in session['user_selection'][select_type]:
+            session['user_selection'][select_type].remove(selection)
         else:
-            user_selection[select_type].append(selection)
+            session['user_selection'][select_type].append(selection)
 
 def initiate_selection():
-    user_selection["activities"] = []
-    user_selection["amenities"] = []
-    user_selection["pois"] = []
-    user_selection["hours"] = []
-    user_selection["park"] = []
+    session['user_selection']["activities"] = []
+    session['user_selection']["amenities"] = []
+    session['user_selection']["pois"] = []
+    session['user_selection']["hours"] = []
+    session['user_selection']["park"] = []
 
-app = Flask(__name__)
+
 
 @app.route('/')
 def home():
@@ -59,16 +70,16 @@ def record_button():
     data = request.get_json()
     update_selection(data["input"], data["type"])
     # Record the button click in the database or perform any other action
-    print(user_selection)
+    print(session['user_selection'])
     return '', 204
 
 
 @app.route('/parks')
 def parks():
     # initiate parks in case users come back to the page
-    user_selection["park"] = []
-    amenity_names=user_selection['amenities']
-    activity_names=user_selection['activities']
+    session['user_selection']["park"] = []
+    amenity_names=session['user_selection']['amenities']
+    activity_names=session['user_selection']['activities']
     top_three_parks = gp.get_park(amenity_names,activity_names)
     hours = [1,2,3,4,5,6,7,8,9,10,11,12]
     return render_template('parks.html',parks = top_three_parks, hours = hours)
@@ -93,9 +104,9 @@ def generate_places(parkName, activities):
 @app.route('/poi')
 def poi():
     # initiate pois in case users come back to the page
-    user_selection["pois"] = []
-    parkName = user_selection['park'][0]
-    activities = user_selection['activities']
+    session['user_selection']["pois"] = []
+    parkName = session['user_selection']['park'][0]
+    activities = session['user_selection']['activities']
     places, urls = generate_places(parkName, activities)
     
     return render_template('poi.html', parkName=parkName, places=places, urls = urls)
@@ -104,12 +115,12 @@ def poi():
 # get lat/lon of selected places
 @app.route('/generate_route')
 def generate_route():
-    print(user_selection)
+    print(session['user_selection'])
     conn, engine = uf.conn_to_db()
     query = """select distinct thing_title, lat, lon, duration from wanderwisely.things_to_do_places as table1
     inner join wanderwisely.activity_related_parks as table2
     on table1.parkCode = table2.parkCode
-    where parkName = '{}' AND thing_title in {} """ .format(user_selection['park'][0], tuple(user_selection['pois']))
+    where parkName = '{}' AND thing_title in {} """ .format(session['user_selection']['park'][0], tuple(session['user_selection']['pois']))
     loca = uf.import_data(query, conn)
 
 
@@ -141,7 +152,7 @@ def generate_route():
     engine.dispose()
 
     route_data_dict = route_data.set_index('thing_title').to_dict()
-    days = ceil(total_time/float(user_selection["hours"][0]))
+    days = ceil(total_time/float(session['user_selection']["hours"][0]))
 
     #print("dictionary of route data: ", route_data_dict)
     #print("shortest_path: ", route_order)
@@ -154,7 +165,7 @@ def generate_route():
     #print("locations: ", locations)
 
 
-    return render_template('generate_route.html', park = user_selection['park'][0], locations = locations, days = days, route_order = route_order,
+    return render_template('generate_route.html', park = session['user_selection']['park'][0], locations = locations, days = days, route_order = route_order,
                            total_time = total_time, route_pair_distance = route_pair_distance,
                            route_pair_time = route_pair_time, duration = duration, route_data_dict = route_data_dict)
 
