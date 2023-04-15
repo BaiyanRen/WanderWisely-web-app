@@ -59,7 +59,7 @@ def record_button():
     data = request.get_json()
     update_selection(data["input"], data["type"])
     # Record the button click in the database or perform any other action
-    print(user_selection)
+    # print(user_selection)
     return '', 204
 
 
@@ -122,7 +122,7 @@ def generate_route():
     # G = {"thing_title": "Hike Beachcroft Path", "lat": 44.3585023529493, 'lon':-68.2059851525353, "duration": 1.5}
     # loca = pd.DataFrame([A,B,C,D,E,F,G])
 
-    print(loca)
+    # print(loca)
     #get route
 
     locations, location_names, route_order, shortest_time, route_pair_distance, route_pair_time, duration, cal_time = tsp(loca)
