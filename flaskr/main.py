@@ -59,7 +59,7 @@ def record_button():
     data = request.get_json()
     update_selection(data["input"], data["type"])
     # Record the button click in the database or perform any other action
-    # print(user_selection)
+    print(user_selection)
     return '', 204
 
 
@@ -104,6 +104,7 @@ def poi():
 # get lat/lon of selected places
 @app.route('/generate_route')
 def generate_route():
+    
     conn, engine = uf.conn_to_db()
     query = """select distinct thing_title, lat, lon, duration from wanderwisely.things_to_do_places as table1
     inner join wanderwisely.activity_related_parks as table2
