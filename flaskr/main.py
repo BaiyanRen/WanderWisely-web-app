@@ -109,7 +109,7 @@ def generate_route():
     query = """select distinct thing_title, lat, lon, duration from wanderwisely.things_to_do_places as table1
     inner join wanderwisely.activity_related_parks as table2
     on table1.parkCode = table2.parkCode
-    where parkName = '{}' AND thing_title in {} """ .format(*user_selection['park'], tuple(user_selection['pois']))
+    where parkName = '{}' AND thing_title in {} """ .format(user_selection['park'][0], tuple(user_selection['pois']))
     loca = uf.import_data(query, conn)
 
 
