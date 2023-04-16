@@ -113,7 +113,7 @@ def generate_places(parkName, activities):
 @app.route('/errorPage')
 def errorPage(errorType):
     if errorType=="noParkOrNoHour":
-        return render_template('errorPage.html', text="No park or hour is selected, Please go back and select ONE park or ONE hour",link = "/parks")
+        return render_template('errorPage.html', text="No park or hour is selected, Please go back",link = "/parks")
     elif errorType=="lessThan2pois":
         return render_template('errorPage.html', text="Please select at least two places",link = "/poi")
     elif errorType=="noActivity":
