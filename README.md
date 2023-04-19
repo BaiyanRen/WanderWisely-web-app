@@ -1,5 +1,5 @@
 
-APP SUMMARY
+Our web application - WanderWisely, is designed to generate interactive personal itinerary based off user's interests in activities and amenities within the national parks of the United States.
 
 DESCRIPTION - Describe the package in a few paragraphs
 
