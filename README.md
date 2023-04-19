@@ -27,6 +27,6 @@ EXECUTION - How to run a demo on our code
 Or without any installation, you can also access our website deployed by Heroku by the link: https://wanderwisely-app.herokuapp.com/
 
 
-Demo Video:
+Demo Video for installation on your local machine: https://youtu.be/G7u4Q5GuoJM
 
 
